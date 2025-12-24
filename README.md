@@ -19,18 +19,15 @@ AJAX 비동기 통신을 사용해 페이지 새로고침 없이 실시간으로
 
 ## 📸 주요 기능 및 화면
 
-| 회원가입 / 로그인 | 실시간 유저 리스트 | 1:1 채팅 |
-| :---: | :---: | :---: |
-|
+### 🔐 회원가입 / 로그인
 <img src="https://raw.githubusercontent.com/AMDEUS935/chatapp-images/chatapp-images/signup.png" width="200">
 <img src="https://raw.githubusercontent.com/AMDEUS935/chatapp-images/chatapp-images/loginpage.png" width="200">
-|
-<img src="https://raw.githubusercontent.com/AMDEUS935/chatapp-images/chatapp-images/main.png" width="200">
-|
-<img src="https://raw.githubusercontent.com/AMDEUS935/chatapp-images/chatapp-images/chatting.png" width="200">
-|
-| 회원 인증 | 접속 유저 실시간 표시 | 메시지 송수신 |
 
+### 👥 실시간 유저 리스트
+<img src="https://raw.githubusercontent.com/AMDEUS935/chatapp-images/chatapp-images/main.png" width="200">
+
+### 💬 1:1 채팅
+<img src="https://raw.githubusercontent.com/AMDEUS935/chatapp-images/chatapp-images/chatting.png" width="200">
 ---
 
 ## 📂 프로젝트 구조
@@ -65,15 +62,14 @@ ChatApp
   - `incoming_msg_id`, `outgoing_msg_id`를 기준으로 대화 상대 구분
   - 1:1 채팅 내역을 안정적으로 저장 및 조회
 
-| 전체 구조 | users | messages |
-| :---: | :---: | :---: |
-|
+### 📊 DB 전체 구조
 <img src="https://raw.githubusercontent.com/AMDEUS935/ChatApp-assets/chatapp-images/db.png" width="250">
-|
+
+### 👤 users 테이블
 <img src="https://raw.githubusercontent.com/AMDEUS935/ChatApp-assets/chatapp-images/users.png" width="250">
-|
+
+### 💬 messages 테이블
 <img src="https://raw.githubusercontent.com/AMDEUS935/ChatApp-assets/chatapp-images/messages.png" width="250">
-|
 
 ---
 
@@ -109,3 +105,4 @@ AJAX 방식의 한계를 체감했고, 추후에는 WebSocket 기반 실시간 �
 그룹 채팅, 읽음 표시 처리 등은 추가 개선 포인트로 남겨두었습니다.
 
 본 프로젝트는 개인 학습 및 포트폴리오 목적으로 제작되었습니다.
+
