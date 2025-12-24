@@ -1,42 +1,111 @@
 # 💬 도란도란 (Doran Doran)
-**PHP & MySQL 기반의 비동기 실시간 웹 채팅 서비스**
 
-웹 기반 채팅 플랫폼입니다. AJAX 통신을 통해 페이지 전환 없이 실시간 메시징이 가능하도록 구현했습니다.
+PHP와 MySQL을 기반으로 구현한 웹 채팅 서비스입니다.  
+AJAX 비동기 통신을 사용해 페이지 새로고침 없이 실시간으로 메시지를 주고받을 수 있도록 구성했습니다.
 
-## 🛠 주요 기술 스택
-- **Backend**: PHP
-- **Database**: MySQL
-- **Frontend**: HTML, CSS, JavaScript (AJAX)
-- **Environment**: XAMPP, VS Code
-
-## 📸 핵심 기능 및 화면 구성
-
-| 회원가입 및 로그인 | 실시간 유저 리스트 | 1:1 채팅 인터페이스 |
-| :---: | :---: | :---: |
-| <img src="signup.PNG" width="200"> <img src="LoginPage.PNG" width="200"> | <img src="main.PNG" width="200"> | <img src="chatting.PNG" width="200"> |
-| **회원가입/로그인** | **실시간 상태 노출** | **실시간 메시지 송수신** |
+회원가입, 로그인, 유저 목록 표시, 1:1 채팅까지  
+웹 채팅 서비스의 기본적인 흐름을 직접 구현하는 것을 목표로 한 프로젝트입니다.
 
 ---
 
-## 💡 주요 개발 포인트 (Self-Review)
+## 🛠 사용 기술
 
-### 1. 데이터베이스 스키마 설계 (`chatdb.sql`)
-- **보안 식별자 관리**: `users` 테이블에서 `unique_id`를 사용하여 외부 노출용 식별자를 별도로 관리함으로써 보안성을 높였습니다.
-- **메시지 매칭 로직**: `messages` 테이블의 `incoming_msg_id`와 `outgoing_msg_id`를 활용해 대화 상대를 정확히 매칭하고 기록합니다.
-
-| 전체 DB 구조 | `users` 테이블 상세 | `messages` 테이블 상세 |
-| :---: | :---: | :---: |
-| <img src="db.PNG" width="250"> | <img src="users.PNG" width="250"> | <img src="messages.PNG" width="250"> |
-
-### 2. 효율적인 코드 재사용 및 보안
-- **SQL Injection 방지**: `mysqli_real_escape_string`을 사용하여 사용자 입력값에 대한 보안 처리를 적용했습니다.
-- **UX 최적화**: CSS의 `word-wrap: break-word` 속성을 통해 긴 메시지 전송 시에도 레이아웃이 유지되도록 설계했습니다.
+- **Backend**: PHP  
+- **Database**: MySQL  
+- **Frontend**: HTML, CSS, JavaScript (AJAX)  
+- **Environment**: XAMPP, VS Code  
 
 ---
 
-## ⚙️ 설치 및 실행 방법
-<img src="xampp.PNG" width="500">
-1. 로컬 **XAMPP** 환경의 `htdocs`에 소스 코드를 복사합니다. 
-2. `phpMyAdmin`을 통해 `chatdb.sql` 파일을 임포트합니다. 
-3. `php/config.php`에서 DB 연결 정보(호스트, 아이디, 패스워드 등)를 확인한 후 브라우저에서 실행합니다.
+## 📸 주요 기능 및 화면
 
+| 회원가입 / 로그인 | 실시간 유저 리스트 | 1:1 채팅 |
+| :---: | :---: | :---: |
+|
+<img src="https://raw.githubusercontent.com/AMDEUS935/chatapp-images/chatapp-images/signup.png" width="200">
+<img src="https://raw.githubusercontent.com/AMDEUS935/chatapp-images/chatapp-images/loginpage.png" width="200">
+|
+<img src="https://raw.githubusercontent.com/AMDEUS935/chatapp-images/chatapp-images/main.png" width="200">
+|
+<img src="https://raw.githubusercontent.com/AMDEUS935/chatapp-images/chatapp-images/chatting.png" width="200">
+|
+| 회원 인증 | 접속 유저 실시간 표시 | 메시지 송수신 |
+
+---
+
+## 📂 프로젝트 구조
+
+ChatApp
+├─ php/
+│ ├─ config.php # DB 설정
+│ ├─ signup.php # 회원가입 처리
+│ ├─ login.php # 로그인 처리
+│ ├─ users.php # 유저 목록 조회
+│ ├─ insert-chat.php # 메시지 저장
+│ └─ get-chat.php # 채팅 내역 조회
+├─ javascript/
+│ ├─ signup.js   # 계정 생성 요청
+│ ├─ login.js    # 인증 요청 처리
+│ ├─ users.js    # 유저 상태 동기화
+│ └─ chat.js     # 채팅 데이터 동기화
+├─ chatdb.sql # DB 스키마
+└─ README.md
+
+---
+
+## 🗄 데이터베이스 설계
+
+채팅 서비스 특성상 **유저 식별**과 **메시지 매칭**을 중심으로 설계했습니다.
+
+- **users**
+  - 내부 ID와 분리된 `unique_id`를 사용해 외부 노출 최소화
+  - 로그인 상태 및 기본 사용자 정보 관리
+
+- **messages**
+  - `incoming_msg_id`, `outgoing_msg_id`를 기준으로 대화 상대 구분
+  - 1:1 채팅 내역을 안정적으로 저장 및 조회
+
+| 전체 구조 | users | messages |
+| :---: | :---: | :---: |
+|
+<img src="https://raw.githubusercontent.com/AMDEUS935/ChatApp-assets/chatapp-images/db.png" width="250">
+|
+<img src="https://raw.githubusercontent.com/AMDEUS935/ChatApp-assets/chatapp-images/users.png" width="250">
+|
+<img src="https://raw.githubusercontent.com/AMDEUS935/ChatApp-assets/chatapp-images/messages.png" width="250">
+|
+
+---
+
+## 🔍 구현 시 고려한 부분
+
+- **비동기 처리**
+  - AJAX를 활용해 메시지 송수신 시 페이지 새로고침 없이 처리
+  - 주기적인 요청 방식으로 채팅 내용 및 유저 상태 갱신
+
+- **기본 보안 처리**
+  - `mysqli_real_escape_string`을 사용해 사용자 입력값 검증
+  - 내부 PK 대신 `unique_id` 기반 통신 구조 사용
+
+- **UI 안정성**
+  - 긴 메시지 입력 시 레이아웃이 깨지지 않도록 CSS 처리
+  - 채팅 화면 중심의 단순한 UI 구성
+
+---
+
+## ⚙️ 실행 방법
+
+1. **XAMPP** 설치 후 Apache, MySQL 실행
+2. 프로젝트 폴더를 `xampp/htdocs` 디렉토리에 복사
+3. `http://localhost/phpmyadmin` 접속 후 `chatdb.sql` 임포트
+4. 페이지 접속 후 사용
+
+🧠 정리 및 개선 방향
+
+웹 채팅 서비스의 전체 흐름과 데이터 구조를 직접 구현하며 이해할 수 있었습니다.
+
+AJAX 방식의 한계를 체감했고, 추후에는 WebSocket 기반 실시간 통신으로 개선해보고 싶습니다.
+
+그룹 채팅, 읽음 표시 처리 등은 추가 개선 포인트로 남겨두었습니다.
+
+본 프로젝트는 개인 학습 및 포트폴리오 목적으로 제작되었습니다.
