@@ -35,6 +35,10 @@ ALTER TABLE `users`
 ALTER TABLE `messages`
   MODIFY `msg_id` int(11) NOT NULL AUTO_INCREMENT;
 
+ALTER TABLE messages
+  ADD INDEX idx_out_in_msg (outgoing_msg_id, incoming_msg_id, msg_id),
+  ADD INDEX idx_in_out_msg (incoming_msg_id, outgoing_msg_id, msg_id);
+
 ALTER TABLE `users`
   MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;

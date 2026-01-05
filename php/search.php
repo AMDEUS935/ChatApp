@@ -7,26 +7,31 @@ if(!isset($_SESSION['unique_id'])){
     exit;
 }
 
-$outgoing_id = $_SESSION['unique_id'];
+$outgoing_id = (int)$_SESSION['unique_id'];
+$searchTerm = trim($_POST['searchTerm'] ?? "");
 
-// 검색어 가져오기 (POST가 없으면 빈 문자열)
-$searchTerm = isset($_POST['searchTerm']) ? mysqli_real_escape_string($conn, $_POST['searchTerm']) : "";
-
-// 검색어가 있으면 LIKE, 없으면 전체
-if($searchTerm != ""){
-    $query = "SELECT * FROM users WHERE unique_id != {$outgoing_id} AND uname LIKE '%{$searchTerm}%'";
-} else {
-    $query = "SELECT * FROM users WHERE unique_id != {$outgoing_id}";
-}
-
-$sql = mysqli_query($conn, $query);
 $output = "";
 
-if(mysqli_num_rows($sql) > 0){
+if ($searchTerm !== "") {
+    $like = "%{$searchTerm}%";
+    $stmt = $conn->prepare("SELECT * FROM users WHERE unique_id != ? AND uname LIKE ?");
+    $stmt->bind_param("is", $outgoing_id, $like);
+} else {
+    // 검색어 비었을 땐 전체 유저(본인 제외)
+    $stmt = $conn->prepare("SELECT * FROM users WHERE unique_id != ?");
+    $stmt->bind_param("i", $outgoing_id);
+}
+
+$stmt->execute();
+$res = $stmt->get_result();
+
+if($res && $res->num_rows > 0){
+    $sql = $res;          // data.php가 $sql을 사용하므로 그대로 맞춰줌
     include "data.php";
 } else {
-    $output .= "채팅할 수 있는 사용자가 없습니다.";
+    $output .= "검색 결과가 없습니다.";
 }
 
 echo $output;
+$stmt->close();
 ?>

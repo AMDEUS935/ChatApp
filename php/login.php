@@ -1,26 +1,48 @@
 <?php
-    session_start(); //$_SESSION['unique_id'] = $row['unique_id']; 이부분?
-    include_once "config.php"; // php 파일내용 포함시키기
-    $email = mysqli_real_escape_string($conn, $_POST['email']);
-    $password = mysqli_real_escape_string($conn, $_POST['password']);
-    
-    
-    if(!empty($email) && !empty($password)) {
-        // 사용자가 입력한 정보가 데이터베이스 및 테이블 행 이메일 및 비밀번호와 일치하는지 확인
-        $sql = mysqli_query($conn, "SELECT * FROM  users WHERE email = '{$email}' AND password = '{$password}'");
-        if(mysqli_num_rows($sql) > 0){ // 사용자가 맞으면
-            $row = mysqli_fetch_assoc($sql);
-            $status = "온라인";
-            $sql2 = mysqli_query($conn, "UPDATE users SET status = '{$status}' WHERE unique_id = {$row['unique_id']}");
-            if($sql2){
-                $_SESSION['unique_id'] = $row['unique_id']; // 이 섹션을 사용하여 다른 php file에서 사용자 unique_id를 사용함 
-                echo "success";  
-            }
-        }else{
-            echo "이메일이나 비밀번호가 맞지 않습니다..";
+session_start();
+include_once "config.php";
+
+$email = trim($_POST['email'] ?? '');
+$password_plain = $_POST['password'] ?? '';
+
+if ($email === '' || $password_plain === '') {
+    echo "필수 정보입니다.";
+    exit;
+}
+
+// 이메일로 사용자 조회 
+$stmt = $conn->prepare("SELECT unique_id, password FROM users WHERE email = ? LIMIT 1");
+$stmt->bind_param("s", $email);
+$stmt->execute();
+$stmt->store_result();
+
+if ($stmt->num_rows === 1) {
+    $stmt->bind_result($unique_id, $password_hash);
+    $stmt->fetch();
+
+    // 해시 검증
+    if (password_verify($password_plain, $password_hash)) {
+        session_regenerate_id(true);
+
+        $uid = (int)$unique_id;
+        $status = "온라인";
+
+        $stmt2 = $conn->prepare("UPDATE users SET status = ? WHERE unique_id = ?");
+        $stmt2->bind_param("si", $status, $uid);
+
+        if ($stmt2->execute()) {
+            $_SESSION['unique_id'] = $uid;
+            echo "success";
+        } else {
+            echo "로그인 처리 중 오류가 발생했습니다.";
         }
-    }else{
-        echo "필수 정보입니다.";
+        $stmt2->close();
+    } else {
+        echo "이메일이나 비밀번호가 맞지 않습니다..";
     }
-    
+} else {
+    echo "이메일이나 비밀번호가 맞지 않습니다..";
+}
+
+$stmt->close();
 ?>

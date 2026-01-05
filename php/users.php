@@ -7,15 +7,17 @@ if(!isset($_SESSION['unique_id'])){
     exit;
 }
 
-$outgoing_id = $_SESSION['unique_id'];
+$outgoing_id = (int)$_SESSION['unique_id'];
 
-// 검색어 없으므로 전체 회원 가져오기 (자기 자신 제외)
-$query = "SELECT * FROM users WHERE unique_id != '{$outgoing_id}'";
-$sql = mysqli_query($conn, $query);
+$sql_text = "SELECT * FROM users WHERE unique_id != ?";
+$stmt = mysqli_prepare($conn, $sql_text);
+mysqli_stmt_bind_param($stmt, "i", $outgoing_id);
+mysqli_stmt_execute($stmt);
+$sql = mysqli_stmt_get_result($stmt);
 
 $output = "";
 
-if(mysqli_num_rows($sql) > 0){
+if($sql && mysqli_num_rows($sql) > 0){
     include "data.php";
 } else {
     $output .= "채팅할 수 있는 사용자가 없습니다.";
