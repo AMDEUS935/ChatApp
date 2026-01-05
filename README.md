@@ -45,19 +45,22 @@ AJAX 기반 **주기적 동기화(Polling)** 방식으로 페이지 새로고침
 ```
 ChatApp
 ├─ php/
-│ ├─ config.php # DB 설정
-│ ├─ signup.php # 회원가입 처리
-│ ├─ login.php # 로그인 처리
-│ ├─ users.php # 유저 목록 조회
-│ ├─ insert-chat.php # 메시지 저장
-│ └─ get-chat.php # 채팅 내역 조회
+│  ├─ config.php
+│  ├─ signup.php
+│  ├─ insert-chat.php
+│  └─ get-chat.php
 ├─ javascript/
-│ ├─ signup.js # 계정 생성 요청
-│ ├─ login.js # 인증 요청 처리
-│ ├─ users.js # 유저 상태 동기화
-│ └─ chat.js # 채팅 데이터 동기화
-├─ chatdb.sql # DB 스키마
+│  ├─ users.js
+│  └─ chat.js
+├─ index.php
+├─ login.php
+├─ users.php
+├─ chat.php
+├─ header.php
+├─ style.css
+├─ chatdb.sql
 └─ README.md
+
 ```
 ---
 
@@ -145,3 +148,4 @@ ChatApp
 ---
 
 본 프로젝트는 **개인 학습 및 포트폴리오 목적**으로 제작되었습니다.
+
