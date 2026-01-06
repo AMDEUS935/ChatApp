@@ -44,10 +44,54 @@
 - 메시지 송수신 시 **페이지 새로고침 없음**
 
 ---
+## 💻 핵심 코드 구현 (Core Implementation)
 
-## 핵심 코드 구현
+게임 서버 및 백엔드 개발 시 가장 중요한 [권한 검증 / 상태 동기화 / 부하 제어] 로직을 중심으로 구성했습니다.
 
+### 1. 전송 권한 서버 강제 및 데이터 검증 (insert-chat.php)
 
+클라이언트가 보내는 전송자 ID를 신뢰하지 않고, 서버 세션을 통해 권한을 강제하여 데이터 조작을 방지했습니다.
+
+```
+// 전송자는 클라이언트 입력을 믿지 않고 세션으로 강제 (보안/권한 검증)
+$outgoing_id = (int)($_SESSION['unique_id'] ?? 0);
+
+// 메시지 길이 제한 및 빈 값 검증 (서버측 최종 방어선)
+$message = trim($_POST['message'] ?? "");
+if ($message === "" || mb_strlen($message, 'UTF-8') > 500) {
+    http_response_code(400);
+    exit;
+}
+```
+
+### 2. Delta Sync: last_id 기반 증분 조회 (get-chat.php)
+
+네트워크 트래픽을 최소화하기 위해 마지막으로 수신한 메시지 ID 이후의 데이터만 동기화하는 '증분 조회' 방식을 채택했습니다.
+
+```
+// 마지막으로 받은 msg_id 이후의 데이터만 조회 (네트워크 부하 감소)
+$last_id = (int)($_POST['last_id'] ?? 0);
+
+$sql = "SELECT * FROM messages 
+        WHERE ((outgoing_msg_id=? AND incoming_msg_id=?) OR (outgoing_msg_id=? AND incoming_msg_id=?)) 
+        AND msg_id > ? ORDER BY msg_id ASC";
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("iiiii", $outgoing_id, $incoming_id, $incoming_id, $outgoing_id, $last_id);
+```
+
+### 3. 지능적 부하 관리: Polling Backoff (chat.js)
+
+서버 부하를 유동적으로 관리하기 위해 새 데이터가 없을 경우 요청 간격을 점진적으로 늘리는 알고리즘을 적용했습니다.
+
+```
+// 새 메시지 유무에 따른 폴링 간격 조정 (Backoff 로직)
+const count = appendMessages(data.items || []);
+
+// 새 데이터가 없으면 delay를 최대 8초까지 점진적으로 증가
+delay = count ? 500 : Math.min(delay * 2, 8000);
+setTimeout(() => load("after"), delay);
+```
 
 ---
 
@@ -157,6 +201,7 @@ ChatApp
 ---
 
 본 프로젝트는 **개인 학습 및 포트폴리오 목적**으로 제작되었습니다.
+
 
 
 
