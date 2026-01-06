@@ -52,7 +52,7 @@
 
 클라이언트가 보내는 전송자 ID를 신뢰하지 않고, 서버 세션을 통해 권한을 강제하여 데이터 조작을 방지했습니다.
 
-```
+```php
 // 전송자는 클라이언트 입력을 믿지 않고 세션으로 강제 (보안/권한 검증)
 $outgoing_id = (int)($_SESSION['unique_id'] ?? 0);
 
@@ -66,14 +66,16 @@ if ($message === "" || mb_strlen($message, 'UTF-8') > 500) {
 
 ### 2. last_id 기반 증분 조회 (get-chat.php)
 
-네트워크 트래픽을 줄이기 위해,`last_id` 이후 메시지만 동기화하는 증분 조회를 적용했습니다.
+네트워크 트래픽을 줄이기 위해, `last_id` 이후 메시지만 동기화하는 증분 조회를 적용했습니다.
 
-```
+```php
+$outgoing_id = (int)($_SESSION['unique_id'] ?? 0); // 세션에서 결정
+
 // 마지막으로 받은 msg_id 이후의 데이터만 조회 (네트워크 부하 감소)
 $last_id = (int)($_POST['last_id'] ?? 0);
 
-$sql = "SELECT * FROM messages 
-        WHERE ((outgoing_msg_id=? AND incoming_msg_id=?) OR (outgoing_msg_id=? AND incoming_msg_id=?)) 
+$sql = "SELECT msg_id, outgoing_msg_id, incoming_msg_id, msg FROM messages
+        WHERE ((outgoing_msg_id=? AND incoming_msg_id=?) OR (outgoing_msg_id=? AND incoming_msg_id=?))
         AND msg_id > ? ORDER BY msg_id ASC";
 
 $stmt = $conn->prepare($sql);
@@ -84,7 +86,7 @@ $stmt->bind_param("iiiii", $outgoing_id, $incoming_id, $incoming_id, $outgoing_i
 
 서버 부하를 유동적으로 관리하기 위해 새 데이터가 없을 경우 요청 간격을 점진적으로 늘리는 알고리즘을 적용했습니다.
 
-```
+```js
 // 새 메시지 유무에 따른 폴링 간격 조정 (Backoff 로직)
 const count = appendMessages(data.items || []);
 
@@ -201,6 +203,7 @@ ChatApp
 ---
 
 본 프로젝트는 **개인 학습 및 포트폴리오 목적**으로 제작되었습니다.
+
 
 
 
