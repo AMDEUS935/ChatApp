@@ -9,7 +9,7 @@
 <body>
     <div class="wrapper">
         <section class="form login">
-            <header>도란도란</header>
+            <header>로그인</header>
             <form action="#">
                 <div class="error-txt"></div>
                 <div class="field input">

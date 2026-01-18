@@ -1,10 +1,7 @@
--- Database: `chatdb`
--- Host: 192.168.0.XX
+-- Database: chatdb
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
-
--- Table structure for table `messages`
 
 CREATE TABLE `messages` (
   `msg_id` int(11) NOT NULL,
@@ -13,8 +10,6 @@ CREATE TABLE `messages` (
   `msg` varchar(1000) NOT NULL,
   `date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- Table structure for table `users`
  
 CREATE TABLE `users` (
   `user_id` int(11) NOT NULL,

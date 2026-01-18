@@ -9,7 +9,7 @@
 <body>
     <div class="wrapper">
         <section class="form signup">
-            <header>도란도란</header>
+            <header>회원가입</header>
             <form action="#" enctype="multipart/form-data" autocomplete="off">
                 <div class="error-txt"></div>
                 <div class="field input">
